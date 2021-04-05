@@ -1,0 +1,128 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "WhatIssueNow Service API",
+        "title": "WhatIssueNow API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/api/1",
+    "paths": {
+        "/list": {
+            "get": {
+                "description": "현재시간 기준 6시간 전까지의 상위 이슈 단어 30개를 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WhatIssueNow"
+                ],
+                "summary": "이슈 단어목록 API",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.WINListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/config.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/tag/{word}": {
+            "get": {
+                "description": "특정 단어의 발생지(태그) 점유율을 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WhatIssueNow"
+                ],
+                "summary": "단어별 태그 점유율 API",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Word",
+                        "name": "word",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.WINTagResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/config.APIError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "config.APIError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.WINListResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "word": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.WINTagResponse": {
+            "type": "object",
+            "properties": {
+                "percent": {
+                    "type": "number"
+                },
+                "tag": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

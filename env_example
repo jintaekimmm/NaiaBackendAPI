@@ -1,0 +1,11 @@
+# Production Mode : release
+# debug Mode : debug
+export GIN_MODE=release
+export PORT=8000
+
+# ElasticSearch
+export ELS_HOST=http://IP:9200
+export ELS_USER=
+export ELS_PASSWORD=
+export ELS_INDEX=
+
