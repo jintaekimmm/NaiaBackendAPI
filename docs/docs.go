@@ -35,7 +35,7 @@ var doc = `{
     "paths": {
         "/list": {
             "get": {
-                "description": "현재시간 기준 6시간 전까지의 상위 이슈 단어 30개를 반환한다",
+                "description": "현재시간 기준 3시간 전까지의 상위 이슈 단어 30개를 반환한다",
                 "consumes": [
                     "application/json"
                 ],
@@ -52,7 +52,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.WINListResponse"
+                                "$ref": "#/definitions/models.WinList"
                             }
                         }
                     },
@@ -91,7 +91,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.WINTagResponse"
+                            "$ref": "#/definitions/models.WinTag"
                         }
                     },
                     "500": {
@@ -113,7 +113,7 @@ var doc = `{
                 }
             }
         },
-        "models.WINListResponse": {
+        "models.WinList": {
             "type": "object",
             "properties": {
                 "count": {
@@ -124,7 +124,7 @@ var doc = `{
                 }
             }
         },
-        "models.WINTagResponse": {
+        "models.WinTag": {
             "type": "object",
             "properties": {
                 "percent": {

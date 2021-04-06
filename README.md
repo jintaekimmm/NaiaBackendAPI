@@ -48,3 +48,18 @@ build
 go build main.go wire_gen.go
 ./main
 ```
+
+## Docker
+Docker Build
+```shell
+ docker build -t [CONTAINER_NAME]:[TAG] \
+ --build-arg ELS_HOST=http://IP:9200 \
+ --build-arg ELS_INDEX=[INDEX] \
+ --build-arg ELS_USER=[USERNAME] \
+ --build-arg ELS_PASSWORD=[PASSWORD] .
+```
+
+Docker run
+```shell
+docker run -d --name [CONTAINER_NAME] -p 8000:8000 --restart=always [CONTAINER_NAME]:1.0
+```

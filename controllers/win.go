@@ -16,11 +16,11 @@ func ProvideWINApi(w services.WINService) WINApi {
 
 // List godoc
 // @Summary 이슈 단어목록 API
-// @Description 현재시간 기준 6시간 전까지의 상위 이슈 단어 30개를 반환한다
+// @Description 현재시간 기준 3시간 전까지의 상위 이슈 단어 30개를 반환한다
 // @Tags WhatIssueNow
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {array} models.WINListResponse
+// @Success 200 {array} models.WinList
 // @Failure 500 {object} config.APIError
 // @Router /list [get]
 func (w *WINApi) List(c *gin.Context) {
@@ -46,7 +46,7 @@ func (w *WINApi) List(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param word path string true "Word"
-// @Success 200 {object} models.WINTagResponse
+// @Success 200 {object} models.WinTag
 // @Failure 500 {object} config.APIError
 // @Router /tag/{word} [get]
 func (w *WINApi) FindWordToTagPercent(c *gin.Context) {

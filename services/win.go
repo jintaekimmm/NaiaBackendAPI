@@ -13,7 +13,7 @@ func ProvideWINService(w repositories.WINRepository) WINService {
 	return WINService{WINRepository: w}
 }
 
-// List 현재시간 기준 6시간 전까지의 상위 이슈 30개를 반환한다
+// List 현재시간 기준 3시간 전까지의 상위 이슈 30개를 반환한다
 func (w *WINService) List() ([]models.WinList, error){
 	// List는 맵 인터페이스를 반환한다
 	r, err := w.WINRepository.List()

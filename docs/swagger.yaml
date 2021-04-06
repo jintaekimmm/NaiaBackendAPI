@@ -5,14 +5,14 @@ definitions:
       error:
         type: string
     type: object
-  models.WINListResponse:
+  models.WinList:
     properties:
       count:
         type: integer
       word:
         type: string
     type: object
-  models.WINTagResponse:
+  models.WinTag:
     properties:
       percent:
         type: number
@@ -37,7 +37,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 현재시간 기준 6시간 전까지의 상위 이슈 단어 30개를 반환한다
+      description: 현재시간 기준 3시간 전까지의 상위 이슈 단어 30개를 반환한다
       produces:
       - application/json
       responses:
@@ -45,7 +45,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.WINListResponse'
+              $ref: '#/definitions/models.WinList'
             type: array
         "500":
           description: Internal Server Error
@@ -71,7 +71,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.WINTagResponse'
+            $ref: '#/definitions/models.WinTag'
         "500":
           description: Internal Server Error
           schema:
