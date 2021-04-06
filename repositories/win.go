@@ -78,7 +78,7 @@ func (w *WINRepository) List() (map[string]interface{}, error){
 				"filter": map[string]interface{}{
 					"range": map[string]interface{}{
 						"createdAt": map[string]interface{}{
-							"gte": "now-6h/H",
+							"gte": "now-3h/H",
 							"lte": "now",
 						},
 					},
@@ -122,7 +122,7 @@ func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{
 				"filter": map[string]interface{}{
 					"range": map[string]interface{}{
 						"createdAt": map[string]interface{}{
-							"gte": "now-6h/H",
+							"gte": "now-3h/H",
 							"lte": "now",
 						},
 					},
