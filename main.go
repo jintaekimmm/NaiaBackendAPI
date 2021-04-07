@@ -7,8 +7,6 @@ import (
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 )
 
@@ -62,7 +60,7 @@ func initRoutes(dbHandler dbHandlers) *gin.Engine {
 	routes.WINRoute(r, winApi)
 
 	// Swagger settings
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return r
 }
