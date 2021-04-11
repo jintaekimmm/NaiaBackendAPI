@@ -115,7 +115,7 @@ func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{
 				"must": []map[string]interface{}{
 					{
 						"match": map[string]string{
-							"word": word,
+							"word.word": word,
 						},
 					},
 				},
