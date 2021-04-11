@@ -88,7 +88,7 @@ func (w *WINRepository) List() (map[string]interface{}, error){
 		"aggs": map[string]interface{}{
 			"countByWord": map[string]interface{}{
 				"terms": map[string]interface{}{
-					"field": "word",
+					"field": "word.word",
 					"size": 30,
 				},
 			},
@@ -115,7 +115,7 @@ func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{
 				"must": []map[string]interface{}{
 					{
 						"match": map[string]string{
-							"word.word": word,
+							"word": word,
 						},
 					},
 				},
