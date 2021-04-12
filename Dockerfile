@@ -9,6 +9,11 @@ ARG ELS_HOST=${ELS_HOST}
 ARG ELS_USER=${ELS_USER}
 ARG ELS_PASSWORD=${ELS_PASSWORD}
 ARG ELS_INDEX=${ELS_INDEX}
+ARG REDIS_HOST=${REDIS_HOST}
+ARG REDIS_PORT=${REDIS_PORT}
+ARG REDIS_DB=${REDIS_DB}
+ARG REDIS_PASSWORD=${REDIS_PASSWORD}
+ARG REDIS_KEY=${REDIS_KEY}
 
 # Env Set
 ENV GIN_MODE=release
@@ -29,7 +34,9 @@ ENV TZ=Asia/Seoul
 
 # Build
 WORKDIR ${HOME}
-RUN apk --no-cache add tzdata && go build main.go wire_gen.go
+RUN apk --no-cache add tzdata \
+&& wire \
+&& go build main.go wire_gen.go
 
 EXPOSE $PORT
 ENTRYPOINT ["./main"]
