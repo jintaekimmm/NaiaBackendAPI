@@ -77,6 +77,14 @@ func (w *WINRepository) search(query map[string]interface{}) (map[string]interfa
 func (w *WINRepository) List() (map[string]interface{}, error) {
 	words, err := getStopWords(w.CTX, w.REDIS, os.Getenv("REDIS_KEY"))
 
+	// words(불용어) 개수가 0이라면 빈 값으로 채워 null_value 에러를 없앤다
+	var word []string
+	if len(words) > 0 {
+		word = words
+	} else {
+		word = []string{""}
+	}
+
 	// Search Query
 	query := map[string]interface{}{
 		"size": 0,
@@ -100,7 +108,7 @@ func (w *WINRepository) List() (map[string]interface{}, error) {
 				"terms": map[string]interface{}{
 					"field":   "word",
 					"size":    30,
-					"exclude": words,
+					"exclude": word,
 				},
 			},
 		},
