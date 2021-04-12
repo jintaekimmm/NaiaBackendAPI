@@ -14,7 +14,7 @@ func ProvideWINService(w repositories.WINRepository) WINService {
 }
 
 // List 현재시간 기준 3시간 전까지의 상위 이슈 30개를 반환한다
-func (w *WINService) List() ([]models.WinList, error){
+func (w *WINService) List() ([]models.WinList, error) {
 	// List는 맵 인터페이스를 반환한다
 	r, err := w.WINRepository.List()
 	if err != nil {
@@ -36,7 +36,7 @@ func (w *WINService) List() ([]models.WinList, error){
 	for _, val := range buckets {
 		doc := val.(map[string]interface{})
 		winResp = append(winResp, models.WinList{
-			Word: doc["key"].(string),
+			Word:  doc["key"].(string),
 			Count: int64(doc["doc_count"].(float64)),
 		})
 	}
@@ -44,9 +44,8 @@ func (w *WINService) List() ([]models.WinList, error){
 	return winResp, nil
 }
 
-
 // FindWordToTagPercent 이슈 Word의 태그별 점유율을 반환한다
-func (w *WINService) FindWordToTagPercent(word string) ([]models.WinTag, error){
+func (w *WINService) FindWordToTagPercent(word string) ([]models.WinTag, error) {
 	// FindWordToTagPercent는 맵 인터페이스를 반환한다
 	r, err := w.WINRepository.FindWordToTagPercent(word)
 	if err != nil {
@@ -72,10 +71,14 @@ func (w *WINService) FindWordToTagPercent(word string) ([]models.WinTag, error){
 	for _, val := range buckets {
 		doc := val.(map[string]interface{})
 		tagResp = append(tagResp, models.WinTag{
-			Tag: doc["key"].(string),
+			Tag:     doc["key"].(string),
 			Percent: doc["doc_count"].(float64) / total * 100,
 		})
 	}
 
 	return tagResp, nil
+}
+
+func (w *WINService) GetStopWords(key string) ([]string, error) {
+	return w.WINRepository.GetStopWords(key)
 }

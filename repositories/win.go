@@ -6,24 +6,32 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/go-redis/redis/v8"
 	"os"
+	"time"
 )
 
 type WINRepository struct {
-	ES *elasticsearch.Client
+	ES    *elasticsearch.Client
+	CTX   context.Context
+	REDIS *redis.Client
 }
 
 // Index name
 var INDEX = os.Getenv("ELS_INDEX")
 
-func ProvideWINRepository(ES *elasticsearch.Client) WINRepository {
-	return WINRepository{ES: ES}
+func ProvideWINRepository(ES *elasticsearch.Client, REDIS *redis.Client) WINRepository {
+	return WINRepository{
+		ES:    ES,
+		CTX:   context.Background(),
+		REDIS: REDIS,
+	}
 }
 
 // search ElasticSearch Query를 파라미터로 받아 요청 후 결과를 반환한다
-func (w *WINRepository) search(query map[string]interface{}) (map[string]interface{}, error){
+func (w *WINRepository) search(query map[string]interface{}) (map[string]interface{}, error) {
 	var buf bytes.Buffer
-	var r  map[string]interface{}
+	var r map[string]interface{}
 
 	// 쿼리 인코딩에 실패한 경우 리턴
 	if err := json.NewEncoder(&buf).Encode(query); err != nil {
@@ -65,8 +73,10 @@ func (w *WINRepository) search(query map[string]interface{}) (map[string]interfa
 	return r, nil
 }
 
-// List 현재시간 기준 6시간 전까지의 상위 이슈 30개를 반환한다
-func (w *WINRepository) List() (map[string]interface{}, error){
+// List 현재시간 기준시간 전까지의 상위 이슈 30개를 반환한다
+func (w *WINRepository) List() (map[string]interface{}, error) {
+	words, err := getStopWords(w.CTX, w.REDIS, os.Getenv("REDIS_KEY"))
+
 	// Search Query
 	query := map[string]interface{}{
 		"size": 0,
@@ -88,8 +98,9 @@ func (w *WINRepository) List() (map[string]interface{}, error){
 		"aggs": map[string]interface{}{
 			"countByWord": map[string]interface{}{
 				"terms": map[string]interface{}{
-					"field": "word.word",
-					"size": 30,
+					"field":   "word",
+					"size":    30,
+					"exclude": words,
 				},
 			},
 		},
@@ -101,13 +112,11 @@ func (w *WINRepository) List() (map[string]interface{}, error){
 		return nil, err
 	}
 
-
 	return r, nil
 }
 
-
 // FindWordToTagPercent 이슈 Word의 태그별 점유율을 반환한다
-func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{}, error){
+func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{}, error) {
 	query := map[string]interface{}{
 		"size": 0,
 		"query": map[string]interface{}{
@@ -133,7 +142,7 @@ func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{
 			"countPerTag": map[string]interface{}{
 				"terms": map[string]interface{}{
 					"field": "tag",
-					"size": 10,
+					"size":  10,
 				},
 			},
 		},
@@ -145,4 +154,22 @@ func (w *WINRepository) FindWordToTagPercent(word string) (map[string]interface{
 	}
 
 	return r, nil
+}
+
+// GetStopWords 단어 집계시에 제외할 불용어 목록을 읽어온다
+func (w *WINRepository) GetStopWords(key string) ([]string, error) {
+	return getStopWords(w.CTX, w.REDIS, key)
+}
+
+func getStopWords(ctx context.Context, redis *redis.Client, key string) ([]string, error) {
+	// 컨텍스트 타임아웃 설정
+	localCtx, cancel := context.WithTimeout(ctx, time.Second*5)
+	defer cancel()
+
+	result := redis.SMembers(localCtx, key)
+	if result.Err() != nil {
+		return nil, result.Err()
+	}
+
+	return result.Val(), nil
 }

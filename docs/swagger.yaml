@@ -54,6 +54,27 @@ paths:
       summary: 이슈 단어목록 API
       tags:
       - WhatIssueNow
+  /stopwords:
+    get:
+      consumes:
+      - application/json
+      description: ElasticSearch 집계시에 제외되는 불용어 목록을 반환한다
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.APIError'
+      summary: 불용어 단어목록 API
+      tags:
+      - StopWords
   /tag/{word}:
     get:
       consumes:

@@ -13,6 +13,7 @@ func WINRoute(r *gin.Engine, win controllers.WINApi) *gin.Engine {
 		{
 			v1.GET("/list", win.List)
 			v1.GET("/tag/:word", win.FindWordToTagPercent)
+			v1.GET("/stopwords", win.GetStopWords)
 		}
 	}
 

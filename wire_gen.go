@@ -10,12 +10,17 @@ import (
 	"github.com/99-66/NaiaBackendApi/repositories"
 	"github.com/99-66/NaiaBackendApi/services"
 	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/go-redis/redis/v8"
+)
+
+import (
+	_ "github.com/99-66/NaiaBackendApi/docs"
 )
 
 // Injectors from wire.go:
 
-func initWINApi(es *elasticsearch.Client) controllers.WINApi {
-	winRepository := repositories.ProvideWINRepository(es)
+func initWINApi(es *elasticsearch.Client, redis2 *redis.Client) controllers.WINApi {
+	winRepository := repositories.ProvideWINRepository(es, redis2)
 	winService := services.ProvideWINService(winRepository)
 	winApi := controllers.ProvideWINApi(winService)
 	return winApi

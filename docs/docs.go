@@ -65,6 +65,38 @@ var doc = `{
                 }
             }
         },
+        "/stopwords": {
+            "get": {
+                "description": "ElasticSearch 집계시에 제외되는 불용어 목록을 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StopWords"
+                ],
+                "summary": "불용어 단어목록 API",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/config.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/tag/{word}": {
             "get": {
                 "description": "특정 단어의 발생지(태그) 점유율을 반환한다",

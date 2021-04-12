@@ -7,6 +7,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"log"
 )
 
@@ -31,14 +32,22 @@ import (
 // @schemes http https
 
 type dbHandlers struct {
-	es *elasticsearch.Client
+	es    *elasticsearch.Client
+	redis *redis.Client
 }
 
 func main() {
 	var err error
 	var dbHandler dbHandlers
 
+	// Initializing ElasticSearch
 	dbHandler.es, err = config.InitElasticSearch()
+	if err != nil {
+		panic(err)
+	}
+
+	// Initializing Redis
+	dbHandler.redis, err = config.InitRedis()
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +65,7 @@ func initRoutes(dbHandler dbHandlers) *gin.Engine {
 	r.Use(cors.New(conf))
 
 	// Project WhatIssueNow routes
-	winApi := initWINApi(dbHandler.es)
+	winApi := initWINApi(dbHandler.es, dbHandler.redis)
 	routes.WINRoute(r, winApi)
 
 	// Swagger settings

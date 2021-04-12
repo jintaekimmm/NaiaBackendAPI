@@ -4,6 +4,7 @@ import (
 	"github.com/99-66/NaiaBackendApi/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 )
 
 type WINApi struct {
@@ -27,14 +28,14 @@ func (w *WINApi) List(c *gin.Context) {
 	winResp, err := w.WINService.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
+			"code":    http.StatusInternalServerError,
 			"message": err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code": http.StatusOK,
+		"code":    http.StatusOK,
 		"message": winResp,
 	})
 }
@@ -55,14 +56,39 @@ func (w *WINApi) FindWordToTagPercent(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": http.StatusInternalServerError,
+			"code":    http.StatusInternalServerError,
 			"message": err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code": http.StatusOK,
+		"code":    http.StatusOK,
 		"message": tagResp,
+	})
+}
+
+// List godoc
+// @Summary 불용어 단어목록 API
+// @Description ElasticSearch 집계시에 제외되는 불용어 목록을 반환한다
+// @Tags StopWords
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {array} string
+// @Failure 400 {object} config.APIError
+// @Router /stopwords [get]
+func (w *WINApi) GetStopWords(c *gin.Context) {
+	words, err := w.WINService.GetStopWords(os.Getenv("REDIS_KEY"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    http.StatusBadRequest,
+			"message": "Bad Request",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": words,
 	})
 }
