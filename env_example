@@ -9,3 +9,9 @@ export ELS_USER=
 export ELS_PASSWORD=
 export ELS_INDEX=
 
+# Redis
+export REDIS_HOST=
+export REDIS_PORT=6379
+export REDIS_DB=0
+export REDIS_PASSWORD=
+export REDIS_KEY=

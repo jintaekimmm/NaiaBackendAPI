@@ -56,7 +56,12 @@ Docker Build
  --build-arg ELS_HOST=http://IP:9200 \
  --build-arg ELS_INDEX=[INDEX] \
  --build-arg ELS_USER=[USERNAME] \
- --build-arg ELS_PASSWORD=[PASSWORD] .
+ --build-arg ELS_PASSWORD=[PASSWORD] \    
+ --build-arg REDIS_HOST="${REDIS_HOST}" \
+ --build-arg REDIS_PORT="${REDIS_PORT}" \
+ --build-arg REDIS_DB="${REDIS_DB}" \
+ --build-arg REDIS_PASSWORD="${REDIS_PASSWORD}" \
+ --build-arg REDIS_KEY="${REDIS_KEY}" .
 ```
 
 Docker run
