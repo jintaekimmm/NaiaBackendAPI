@@ -35,7 +35,7 @@ ENV TZ=Asia/Seoul
 # Build
 WORKDIR ${HOME}
 RUN apk --no-cache add tzdata \
-&& go build main.go wire_gen.go
+&& go build main.go
 
 EXPOSE $PORT
 ENTRYPOINT ["./main"]

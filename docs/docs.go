@@ -18,11 +18,10 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
+            "name": "Jintae, kim",
+            "url": "http://whatissuenow.com",
+            "email": "6199@outlook.kr"
         },
         "license": {
             "name": "Apache 2.0",
@@ -52,14 +51,14 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.WinList"
+                                "$ref": "#/definitions/win_m.WList"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/config.APIError"
+                            "$ref": "#/definitions/libs.APIError"
                         }
                     }
                 }
@@ -91,7 +90,7 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/config.APIError"
+                            "$ref": "#/definitions/libs.APIError"
                         }
                     }
                 }
@@ -123,13 +122,13 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.WinTag"
+                            "$ref": "#/definitions/win_m.WTag"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/config.APIError"
+                            "$ref": "#/definitions/libs.APIError"
                         }
                     }
                 }
@@ -137,15 +136,18 @@ var doc = `{
         }
     },
     "definitions": {
-        "config.APIError": {
+        "libs.APIError": {
             "type": "object",
             "properties": {
-                "error": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
                     "type": "string"
                 }
             }
         },
-        "models.WinList": {
+        "win_m.WList": {
             "type": "object",
             "properties": {
                 "count": {
@@ -156,7 +158,7 @@ var doc = `{
                 }
             }
         },
-        "models.WinTag": {
+        "win_m.WTag": {
             "type": "object",
             "properties": {
                 "percent": {
@@ -181,7 +183,7 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "1.0",
+	Version:     "1.1",
 	Host:        "localhost:8000",
 	BasePath:    "/api/1",
 	Schemes:     []string{"http", "https"},
