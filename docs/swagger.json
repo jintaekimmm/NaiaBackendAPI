@@ -7,17 +7,16 @@
     "info": {
         "description": "WhatIssueNow Service API",
         "title": "WhatIssueNow API",
-        "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
+            "name": "Jintae, kim",
+            "url": "http://whatissuenow.com",
+            "email": "6199@outlook.kr"
         },
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
-        "version": "1.0"
+        "version": "1.1"
     },
     "host": "localhost:8000",
     "basePath": "/api/1",
@@ -41,14 +40,14 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.WinList"
+                                "$ref": "#/definitions/win_m.WList"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/config.APIError"
+                            "$ref": "#/definitions/libs.APIError"
                         }
                     }
                 }
@@ -80,7 +79,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/config.APIError"
+                            "$ref": "#/definitions/libs.APIError"
                         }
                     }
                 }
@@ -112,13 +111,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.WinTag"
+                            "$ref": "#/definitions/win_m.WTag"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/config.APIError"
+                            "$ref": "#/definitions/libs.APIError"
                         }
                     }
                 }
@@ -126,15 +125,18 @@
         }
     },
     "definitions": {
-        "config.APIError": {
+        "libs.APIError": {
             "type": "object",
             "properties": {
-                "error": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
                     "type": "string"
                 }
             }
         },
-        "models.WinList": {
+        "win_m.WList": {
             "type": "object",
             "properties": {
                 "count": {
@@ -145,7 +147,7 @@
                 }
             }
         },
-        "models.WinTag": {
+        "win_m.WTag": {
             "type": "object",
             "properties": {
                 "percent": {

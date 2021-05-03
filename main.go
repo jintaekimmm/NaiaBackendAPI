@@ -1,24 +1,20 @@
 package main
 
 import (
-	"github.com/99-66/NaiaBackendApi/config"
-	_ "github.com/99-66/NaiaBackendApi/docs"
-	"github.com/99-66/NaiaBackendApi/routes"
-	"github.com/elastic/go-elasticsearch/v7"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
+	"fmt"
+	"github.com/99-66/NaiaBackendApi/repositories"
+	"github.com/99-66/NaiaBackendApi/server"
 	"log"
+	"os"
 )
 
 // @title WhatIssueNow API
-// @version 1.0
-// @description This is a sample server celler server.
-// @termsOfService http://swagger.io/terms/
+// @version 1.1
+// @description What Issue Now? Service Api Docs
 
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+// @contact.name Jintae, kim
+// @contact.url http://whatissuenow.com
+// @contact.email 6199@outlook.kr
 
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
@@ -30,46 +26,19 @@ import (
 // @title WhatIssueNow API
 // @description WhatIssueNow Service API
 // @schemes http https
-
-type dbHandlers struct {
-	es    *elasticsearch.Client
-	redis *redis.Client
-}
-
 func main() {
-	var err error
-	var dbHandler dbHandlers
-
-	// Initializing ElasticSearch
-	dbHandler.es, err = config.InitElasticSearch()
-	if err != nil {
-		panic(err)
+	repositories.Init()
+	if repositories.Connections.DB != nil {
+		db := repositories.Connections.DB
+		sqlDB, ok := db.DB()
+		if ok != nil {
+			defer sqlDB.Close()
+		}
 	}
 
-	// Initializing Redis
-	dbHandler.redis, err = config.InitRedis()
-	if err != nil {
-		panic(err)
-	}
+	addr := "0.0.0.0"
+	port := os.Getenv("PORT")
+	address := fmt.Sprintf("%s:%s", addr, port)
 
-	r := initRoutes(dbHandler)
-	log.Fatal(r.Run())
-}
-
-func initRoutes(dbHandler dbHandlers) *gin.Engine {
-	r := gin.Default()
-
-	// CORS allows all origins
-	conf := cors.DefaultConfig()
-	conf.AllowAllOrigins = true
-	r.Use(cors.New(conf))
-
-	// Project WhatIssueNow routes
-	winApi := initWINApi(dbHandler.es, dbHandler.redis)
-	routes.WINRoute(r, winApi)
-
-	// Swagger settings
-	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	return r
+	log.Fatal(server.RunAPI(address))
 }

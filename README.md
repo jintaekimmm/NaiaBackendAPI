@@ -1,58 +1,46 @@
 # Naia Backend API
 
-Naia Proejct Backend API
-
-ElasticSearch를 조회하여 단어 순위등의 결과를 제공한다
+Naia Proejct Backend APIs
 
 - [Gin WebFramework](https://github.com/gin-gonic/gin)
 - [ElasticSearch Client](https://github.com/elastic/go-elasticsearch)
-- [Wire](https://github.com/google/wire)
+- [Redis Client](https://github.com/go-redis/redis)
 - [Swagger](https://github.com/swaggo/swag)
 
-### Project Flow
-```shell
-Controllers -> Services -> Repositories -> Models 
-```
 
-### Set Environment
+## Set Environment
 ```shell
-cp env_exampl env.sh
+$ cp env_example env.sh
 
 # changed ElasticSearch, index...
 # and apply the modified environment variables
-source env.sh
+$ source env.sh
 ```
-### Swagger
+## Swagger
 After modify swagger options
 
 Swagger URL: http://IP:8000/swagger/index.html
 ```shell
-go get -u github.com/swaggo/swag/cmd/swag
-swag init -parseDependency=true
-```
-
-### Pre-Run(build)
-Usage Wire(Dependency Injection)
-```shell
-$ wire
+$ go get -u github.com/swaggo/swag/cmd/swag
+$ swag init -parseDependency=true
 ```
 
 ## Run
 No build
 ```shell
-go run main.go wire_gen.go
+$ go run main.go
 ```
 
 build
 ```shell
-go build main.go wire_gen.go
-./main
+$ go build main.go
+$ ./main
 ```
 
 ## Docker
-Docker Build
+Image Build
 ```shell
- docker build -t [CONTAINER_NAME]:[TAG] \
+$ docker build -t [CONTAINER_REPOSITORY]:[TAG] \
  --build-arg ELS_HOST=http://IP:9200 \
  --build-arg ELS_INDEX=[INDEX] \
  --build-arg ELS_USER=[USERNAME] \
@@ -64,7 +52,7 @@ Docker Build
  --build-arg REDIS_KEY="${REDIS_KEY}" .
 ```
 
-Docker run
+Container Run
 ```shell
-docker run -d --name [CONTAINER_NAME] -p 8000:8000 --restart=always [CONTAINER_NAME]:1.0
+$ docker run -d --name [CONTAINER_NAME] -p 8000:8000 --restart=always [CONTAINER_REPOSITORY]:[CONTAINER_VERSION]
 ```
