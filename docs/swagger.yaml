@@ -101,6 +101,34 @@ paths:
       summary: 단어별 태그 점유율 API
       tags:
       - WhatIssueNow
+  /wordcloud:
+    get:
+      consumes:
+      - application/json
+      description: 현재시간 기준 3시간 전까지의 상위 이슈 단어 60개를 반환한다
+      parameters:
+      - description: 워드클라우드 단어 개수(최대 100개)
+        in: query
+        name: count
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                type: object
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/libs.APIError'
+      summary: 워드 클라우드를 위한 이슈 단어목록 API
+      tags:
+      - WhatIssueNow
 schemes:
 - http
 - https
