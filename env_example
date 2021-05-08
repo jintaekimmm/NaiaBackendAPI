@@ -15,3 +15,6 @@ export REDIS_PORT=6379
 export REDIS_DB=0
 export REDIS_PASSWORD=
 export REDIS_KEY=
+
+# Related Words API
+export RELATED_API=http://IP:PORT
