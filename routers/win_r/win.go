@@ -17,6 +17,11 @@ func InitWINRoutes(r *gin.Engine) *gin.Engine {
 			v1.GET("/tag/:word", win_c.WordToTagPercent)
 			v1.GET("/stopwords", stopWord_c.GetStopWords)
 			//v1.POST("/stopwords", stopWord_c.SetWords)
+			related := v1.Group("/related")
+			{
+				related.GET("/w/:word", win_c.WordToFindRelated)
+				related.GET("/list/:word", win_c.WordToFindRelatedTweets)
+			}
 		}
 	}
 

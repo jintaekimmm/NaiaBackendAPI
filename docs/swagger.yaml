@@ -7,6 +7,27 @@ definitions:
       message:
         type: string
     type: object
+  win_m.RLinks:
+    properties:
+      sid:
+        type: string
+      tid:
+        type: string
+    type: object
+  win_m.RNodes:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  win_m.RTweets:
+    properties:
+      createdAt:
+        type: string
+      text:
+        type: string
+    type: object
   win_m.WList:
     properties:
       count:
@@ -20,6 +41,21 @@ definitions:
         type: number
       tag:
         type: string
+    type: object
+  win_m.WordsResponse:
+    properties:
+      links:
+        items:
+          $ref: '#/definitions/win_m.RLinks'
+        type: array
+      nodes:
+        items:
+          $ref: '#/definitions/win_m.RNodes'
+        type: array
+      rank:
+        additionalProperties:
+          type: number
+        type: object
     type: object
 host: localhost:8000
 info:
@@ -53,6 +89,56 @@ paths:
           schema:
             $ref: '#/definitions/libs.APIError'
       summary: 이슈 단어목록 API
+      tags:
+      - WhatIssueNow
+  /related/{word}:
+    get:
+      consumes:
+      - application/json
+      description: 특정 단어와 관련된 다른 단어들을 반환한다
+      parameters:
+      - description: Word
+        in: path
+        name: word
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/win_m.WordsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/libs.APIError'
+      summary: 특정 단어와 연관된 단어 목록 API
+      tags:
+      - WhatIssueNow
+  /related/list/{word}:
+    get:
+      consumes:
+      - application/json
+      description: 특정 단어의 관련된 최근 트윗 목록 100개를 반환한다
+      parameters:
+      - description: Word
+        in: path
+        name: word
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/win_m.RTweets'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/libs.APIError'
+      summary: 특정 단어의 최근 트윗 목록 API
       tags:
       - WhatIssueNow
   /stopwords:

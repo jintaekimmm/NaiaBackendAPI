@@ -41,15 +41,17 @@ $ ./main
 Image Build
 ```shell
 $ docker build -t [CONTAINER_REPOSITORY]:[TAG] \
- --build-arg ELS_HOST=http://IP:9200 \
- --build-arg ELS_INDEX=[INDEX] \
- --build-arg ELS_USER=[USERNAME] \
- --build-arg ELS_PASSWORD=[PASSWORD] \    
- --build-arg REDIS_HOST="${REDIS_HOST}" \
- --build-arg REDIS_PORT="${REDIS_PORT}" \
- --build-arg REDIS_DB="${REDIS_DB}" \
- --build-arg REDIS_PASSWORD="${REDIS_PASSWORD}" \
- --build-arg REDIS_KEY="${REDIS_KEY}" .
+ --build-arg ELS_HOST[ELS_HOST] \
+ --build-arg ELS_INDEX=[ELS_INDEX] \
+ --build-arg ELS_USER=[ELS_USER] \
+ --build-arg ELS_PASSWORD=[ELS_PASSWORD] \    
+ --build-arg REDIS_HOST=[REDIS_HOST] \
+ --build-arg REDIS_PORT=[REDIS_PORT] \
+ --build-arg REDIS_DB=[REDIS_DB] \
+ --build-arg REDIS_PASSWORD=[REDIS_PASSWORD] \
+ --build-arg REDIS_KEY=[REDIS_KEY] \
+ --build-arg RELATED_API=[RELATED_API] \
+ .
 ```
 
 Container Run

@@ -93,3 +93,57 @@ func ListForWordCloud(c *gin.Context) {
 		"message": resp,
 	})
 }
+
+// WordToFindRelated godoc
+// @Summary  특정 단어와 연관된 단어 목록 API
+// @Description 특정 단어와 관련된 다른 단어들을 반환한다
+// @Tags WhatIssueNow
+// @Accept application/json
+// @Produce application/json
+// @Param word path string true "Word"
+// @Success 200 {object} win_m.WordsResponse
+// @Failure 500 {object} libs.APIError
+// @Router /related/{word} [get]
+func WordToFindRelated(c *gin.Context) {
+	p := c.Param("word")
+
+	var wRelatedWords win_m.WRelatedWords
+	wordsResp, err := wRelatedWords.RelatedWords(p)
+
+	if err != nil {
+		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": wordsResp,
+	})
+}
+
+// WordToFindRelatedTweets godoc
+// @Summary  특정 단어의 최근 트윗 목록 API
+// @Description 특정 단어의 관련된 최근 트윗 목록 100개를 반환한다
+// @Tags WhatIssueNow
+// @Accept application/json
+// @Produce application/json
+// @Param word path string true "Word"
+// @Success 200 {object} win_m.RTweets
+// @Failure 500 {object} libs.APIError
+// @Router /related/list/{word} [get]
+func WordToFindRelatedTweets(c *gin.Context) {
+	p := c.Param("word")
+
+	var wRelatedTweets win_m.WRelatedTweets
+	tweetsResp, err := wRelatedTweets.RelatedTweets(p)
+
+	if err != nil {
+		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": tweetsResp,
+	})
+}

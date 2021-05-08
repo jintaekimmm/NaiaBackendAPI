@@ -14,5 +14,6 @@ docker build \
     --build-arg REDIS_DB="${REDIS_DB}" \
     --build-arg REDIS_PASSWORD="${REDIS_PASSWORD}" \
     --build-arg REDIS_KEY="${REDIS_KEY}" \
+    --build-arg RELATED_API="${RELATED_API}" \
     -f $DOCKERFILE_PATH \
     -t $IMAGE_NAME .

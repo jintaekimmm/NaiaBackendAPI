@@ -53,6 +53,82 @@
                 }
             }
         },
+        "/related/list/{word}": {
+            "get": {
+                "description": "특정 단어의 관련된 최근 트윗 목록 100개를 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WhatIssueNow"
+                ],
+                "summary": "특정 단어의 최근 트윗 목록 API",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Word",
+                        "name": "word",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/win_m.RTweets"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/libs.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/related/{word}": {
+            "get": {
+                "description": "특정 단어와 관련된 다른 단어들을 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WhatIssueNow"
+                ],
+                "summary": "특정 단어와 연관된 단어 목록 API",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Word",
+                        "name": "word",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/win_m.WordsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/libs.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/stopwords": {
             "get": {
                 "description": "ElasticSearch 집계시에 제외되는 불용어 목록을 반환한다",
@@ -179,6 +255,39 @@
                 }
             }
         },
+        "win_m.RLinks": {
+            "type": "object",
+            "properties": {
+                "sid": {
+                    "type": "string"
+                },
+                "tid": {
+                    "type": "string"
+                }
+            }
+        },
+        "win_m.RNodes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "win_m.RTweets": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
         "win_m.WList": {
             "type": "object",
             "properties": {
@@ -198,6 +307,29 @@
                 },
                 "tag": {
                     "type": "string"
+                }
+            }
+        },
+        "win_m.WordsResponse": {
+            "type": "object",
+            "properties": {
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/win_m.RLinks"
+                    }
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/win_m.RNodes"
+                    }
+                },
+                "rank": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number"
+                    }
                 }
             }
         }
