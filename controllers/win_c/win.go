@@ -15,12 +15,26 @@ import (
 // @Tags WhatIssueNow
 // @Accept application/json
 // @Produce application/json
+// @Param count query int false "Word list count by count"
+// @Param f query string false "Word Filtering by f"
 // @Success 200 {array} win_m.WList
 // @Failure 500 {object} libs.APIError
 // @Router /list [get]
 func List(c *gin.Context) {
 	var wList win_m.WList
-	resp, err := wList.List()
+	p := c.Query("count")
+	filter := c.Query("f")
+
+	count, err := strconv.Atoi(p)
+	if err != nil {
+		count = 30
+	}
+	count = int(math.Abs(float64(count)))
+	if count > 100 {
+		count = 30
+	}
+
+	resp, err := wList.List(count, filter)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -65,12 +79,16 @@ func WordToTagPercent(c *gin.Context) {
 // @Tags WhatIssueNow
 // @Accept application/json
 // @Produce application/json
+// @Param count query int false "Word list count by count"
+// @Param f query string false "Word Filtering by f"
 // @Param count query int false "워드클라우드 단어 개수(최대 100개)"
 // @Success 200 {array} win_m.WordCloudList
 // @Failure 500 {object} libs.APIError
 // @Router /wordcloud [get]
 func ListForWordCloud(c *gin.Context) {
 	p := c.Query("count")
+	filter := c.Query("f")
+
 	count, err := strconv.Atoi(p)
 	if err != nil {
 		count = 60
@@ -81,7 +99,7 @@ func ListForWordCloud(c *gin.Context) {
 	}
 
 	var wWordList win_m.WWordCloud
-	resp, err := wWordList.List(count)
+	resp, err := wWordList.List(count, filter)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -145,5 +163,55 @@ func WordToFindRelatedTweets(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"message": tweetsResp,
+	})
+}
+
+// TagCount godoc
+// @Summary 태그별 단어 수 API
+// @Description 현재시간 기준 3시간 전까지의 태그별 단어 수를 반환한다
+// @Tags WhatIssueNow
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {array} win_m.WTagCount
+// @Failure 500 {object} libs.APIError
+// @Router /tag/count [get]
+func TagCount(c *gin.Context) {
+	var tagCount win_m.WTagCount
+
+	resp, err := tagCount.Counts()
+
+	if err != nil {
+		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": resp,
+	})
+}
+
+// WordToCount godoc
+// @Summary 일주일간 수집한 단어의 수 API
+// @Description 현재시간 기준 7일전까지의 수집한 단어의 수를 일별로 반환한다
+// @Tags WhatIssueNow
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {array} win_m.WWordCount
+// @Failure 500 {object} libs.APIError
+// @Router /word/count [get]
+func WordToCount(c *gin.Context) {
+	var wordCount win_m.WWordCount
+
+	resp, err := wordCount.Counts()
+
+	if err != nil {
+		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": resp,
 	})
 }
