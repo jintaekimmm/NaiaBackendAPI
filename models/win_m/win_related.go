@@ -18,8 +18,9 @@ type WRelatedWords struct {
 }
 
 type RNodes struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id   string  `json:"id"`
+	Name string  `json:"name"`
+	Size float64 `json:"_size"`
 }
 
 type RLinks struct {
