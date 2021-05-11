@@ -7,33 +7,69 @@ type WWordCloud struct {
 type WordCloudList []interface{}
 
 // getListQuery 검색에 사용할 Query를 생성한다
-func (w *WWordCloud) getListQuery(word []string, count int) map[string]interface{} {
-	query := map[string]interface{}{
-		"size": 0,
-		"query": map[string]interface{}{
-			"bool": map[string]interface{}{
-				"must": []map[string]interface{}{
-					{"match_all": map[string]interface{}{}},
-				},
-				"filter": map[string]interface{}{
-					"range": map[string]interface{}{
-						"createdAt": map[string]interface{}{
-							"gte": "now-3h/H",
-							"lte": "now",
+func (w *WWordCloud) getListQuery(word []string, count int, filter string) map[string]interface{} {
+	var query map[string]interface{}
+
+	if filter == "all" || filter == "" {
+		query = map[string]interface{}{
+			"size": 0,
+			"query": map[string]interface{}{
+				"bool": map[string]interface{}{
+					"must": []map[string]interface{}{
+						{"match_all": map[string]interface{}{}},
+					},
+					"filter": map[string]interface{}{
+						"range": map[string]interface{}{
+							"createdAt": map[string]interface{}{
+								"gte": "now-3h/H",
+								"lte": "now",
+							},
 						},
 					},
 				},
 			},
-		},
-		"aggs": map[string]interface{}{
-			"countByWord": map[string]interface{}{
-				"terms": map[string]interface{}{
-					"field":   "word",
-					"size":    count,
-					"exclude": word,
+			"aggs": map[string]interface{}{
+				"countByWord": map[string]interface{}{
+					"terms": map[string]interface{}{
+						"field":   "word",
+						"size":    count,
+						"exclude": word,
+					},
 				},
 			},
-		},
+		}
+	} else {
+		query = map[string]interface{}{
+			"size": 0,
+			"query": map[string]interface{}{
+				"bool": map[string]interface{}{
+					"must": []map[string]interface{}{
+						{
+							"match": map[string]interface{}{
+								"tag": filter,
+							},
+						},
+					},
+					"filter": map[string]interface{}{
+						"range": map[string]interface{}{
+							"createdAt": map[string]interface{}{
+								"gte": "now-3h/H",
+								"lte": "now",
+							},
+						},
+					},
+				},
+			},
+			"aggs": map[string]interface{}{
+				"countByWord": map[string]interface{}{
+					"terms": map[string]interface{}{
+						"field":   "word",
+						"size":    30,
+						"exclude": word,
+					},
+				},
+			},
+		}
 	}
 
 	return query
@@ -61,7 +97,7 @@ func (w *WWordCloud) resultToResponseModel(r map[string]interface{}) (resp WordC
 	return resp, nil
 }
 
-func (w *WWordCloud) List(count int) (WordCloudList, error) {
+func (w *WWordCloud) List(count int, filter string) (WordCloudList, error) {
 	var stopWord WStopWord
 	words, err := stopWord.List()
 
@@ -73,7 +109,7 @@ func (w *WWordCloud) List(count int) (WordCloudList, error) {
 		word = []string{""}
 	}
 
-	query := w.getListQuery(word, count)
+	query := w.getListQuery(word, count, filter)
 
 	// 검색을 요청한다
 	r, err := search(query)
