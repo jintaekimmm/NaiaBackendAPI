@@ -1,15 +1,10 @@
-package win_m
+package services
 
-type WWordCloud struct {
-	Words []interface{} `json:"words"`
-}
-
-type WordCloudList []interface{}
+import "github.com/99-66/NaiaBackendApi/models/win"
 
 // getListQuery 검색에 사용할 Query를 생성한다
-func (w *WWordCloud) getListQuery(word []string, count int, filter string) map[string]interface{} {
+func getListQuery(word []string, count int, filter string) map[string]interface{} {
 	var query map[string]interface{}
-
 	if filter == "all" || filter == "" {
 		query = map[string]interface{}{
 			"size": 0,
@@ -64,7 +59,7 @@ func (w *WWordCloud) getListQuery(word []string, count int, filter string) map[s
 				"countByWord": map[string]interface{}{
 					"terms": map[string]interface{}{
 						"field":   "word",
-						"size":    30,
+						"size":    count,
 						"exclude": word,
 					},
 				},
@@ -75,8 +70,8 @@ func (w *WWordCloud) getListQuery(word []string, count int, filter string) map[s
 	return query
 }
 
-// resultToResponseModel 검색 결과를 응답 모델 값으로 변환한다
-func (w *WWordCloud) resultToResponseModel(r map[string]interface{}) (resp WordCloudList, err error) {
+// listToResponseModel List 결과를 반환 모델로 변환한다
+func listResponseModel(r map[string]interface{}) (wList []win.List, err error) {
 	// 검색 결과를 반환 모델로 변환한다
 	// 인터페이스를 반환하므로 직접 타입 어설션을 해야한다
 	// aggregations 값을 변환한다
@@ -84,22 +79,24 @@ func (w *WWordCloud) resultToResponseModel(r map[string]interface{}) (resp WordC
 	buckets := aggs["buckets"].([]interface{})
 	// 검색 결과가 없는 경우 빈 모델을 반환한다
 	if len(buckets) <= 0 {
-		return WordCloudList{}, nil
+		return []win.List{}, nil
 	}
 
 	// 버킷 내용을 모델로 변환한다
 	for _, val := range buckets {
 		doc := val.(map[string]interface{})
-		//v := []interface{}{1, "a"}
-		resp = append(resp, WordCloudList{doc["key"].(string), doc["doc_count"].(float64)})
+		wList = append(wList, win.List{
+			Word:  doc["key"].(string),
+			Count: int64(doc["doc_count"].(float64)),
+		})
 	}
 
-	return resp, nil
+	return wList, nil
 }
 
-func (w *WWordCloud) List(count int, filter string) (WordCloudList, error) {
-	var stopWord WStopWord
-	words, err := stopWord.List()
+// WordList 단어 목록을 검색하여 반환한다
+func WordList(count int, filter string) ([]win.List, error) {
+	words, err := StopWords()
 
 	// words(불용어) 개수가 0이라면 빈 값으로 채워 null_value 에러를 없앤다
 	var word []string
@@ -109,13 +106,13 @@ func (w *WWordCloud) List(count int, filter string) (WordCloudList, error) {
 		word = []string{""}
 	}
 
-	query := w.getListQuery(word, count, filter)
+	query := getListQuery(word, count, filter)
 
 	// 검색을 요청한다
 	r, err := search(query)
 	if err != nil {
-		return WordCloudList{}, err
+		return []win.List{}, err
 	}
 
-	return w.resultToResponseModel(r)
+	return listResponseModel(r)
 }

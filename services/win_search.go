@@ -1,4 +1,4 @@
-package win_m
+package services
 
 import (
 	"bytes"
@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"github.com/99-66/NaiaBackendApi/repositories"
 )
-
-type WIndex struct{}
 
 // search ElasticSearch Query를 파라미터로 받아 요청 후 결과를 반환한다
 func search(query map[string]interface{}) (map[string]interface{}, error) {

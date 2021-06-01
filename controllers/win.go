@@ -1,8 +1,8 @@
-package win_c
+package controllers
 
 import (
 	"github.com/99-66/NaiaBackendApi/libs"
-	"github.com/99-66/NaiaBackendApi/models/win_m"
+	"github.com/99-66/NaiaBackendApi/services"
 	"github.com/gin-gonic/gin"
 	"math"
 	"net/http"
@@ -17,11 +17,10 @@ import (
 // @Produce application/json
 // @Param count query int false "Word list count by count"
 // @Param f query string false "Word Filtering by f"
-// @Success 200 {array} win_m.WList
-// @Failure 500 {object} libs.APIError
+// @Success 200 {array} win.List
+// @Failure 500 {object} responses.Error
 // @Router /list [get]
 func List(c *gin.Context) {
-	var wList win_m.WList
 	p := c.Query("count")
 	filter := c.Query("f")
 
@@ -34,7 +33,7 @@ func List(c *gin.Context) {
 		count = 30
 	}
 
-	resp, err := wList.List(count, filter)
+	resp, err := services.WordList(count, filter)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -42,7 +41,6 @@ func List(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": resp,
 	})
 }
@@ -54,13 +52,12 @@ func List(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param word path string true "Word"
-// @Success 200 {object} win_m.WTag
-// @Failure 500 {object} libs.APIError
-// @Router /tag/{word} [get]
+// @Success 200 {object} win.Tag
+// @Failure 500 {object} responses.Error
+// @Router /tag/w/{word} [get]
 func WordToTagPercent(c *gin.Context) {
 	p := c.Param("word")
-	var wTag win_m.WTag
-	resp, err := wTag.WordToTagPercent(p)
+	resp, err := services.WordToTagPercent(p)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -68,7 +65,6 @@ func WordToTagPercent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": resp,
 	})
 }
@@ -82,8 +78,8 @@ func WordToTagPercent(c *gin.Context) {
 // @Param count query int false "Word list count by count"
 // @Param f query string false "Word Filtering by f"
 // @Param count query int false "워드클라우드 단어 개수(최대 100개)"
-// @Success 200 {array} win_m.WordCloudList
-// @Failure 500 {object} libs.APIError
+// @Success 200 {array} win.WordCloud
+// @Failure 500 {object} responses.Error
 // @Router /wordcloud [get]
 func ListForWordCloud(c *gin.Context) {
 	p := c.Query("count")
@@ -98,8 +94,7 @@ func ListForWordCloud(c *gin.Context) {
 		count = 60
 	}
 
-	var wWordList win_m.WWordCloud
-	resp, err := wWordList.List(count, filter)
+	resp, err := services.WordCloud(count, filter)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -107,7 +102,6 @@ func ListForWordCloud(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": resp,
 	})
 }
@@ -119,14 +113,13 @@ func ListForWordCloud(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param word path string true "Word"
-// @Success 200 {object} win_m.WordsResponse
-// @Failure 500 {object} libs.APIError
-// @Router /related/{word} [get]
+// @Success 200 {object} win.WordsResponse
+// @Failure 500 {object} responses.Error
+// @Router /related/w/{word} [get]
 func WordToFindRelated(c *gin.Context) {
 	p := c.Param("word")
 
-	var wRelatedWords win_m.WRelatedWords
-	wordsResp, err := wRelatedWords.RelatedWords(p)
+	wordsResp, err := services.RelatedWords(p)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -134,7 +127,6 @@ func WordToFindRelated(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": wordsResp,
 	})
 }
@@ -146,14 +138,13 @@ func WordToFindRelated(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param word path string true "Word"
-// @Success 200 {object} win_m.RTweets
-// @Failure 500 {object} libs.APIError
+// @Success 200 {object} win.RelatedTweets
+// @Failure 500 {object} responses.Error
 // @Router /related/list/{word} [get]
 func WordToFindRelatedTweets(c *gin.Context) {
 	p := c.Param("word")
 
-	var wRelatedTweets win_m.WRelatedTweets
-	tweetsResp, err := wRelatedTweets.RelatedTweets(p)
+	tweetsResp, err := services.RelatedTweets(p)
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -161,7 +152,6 @@ func WordToFindRelatedTweets(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": tweetsResp,
 	})
 }
@@ -172,13 +162,11 @@ func WordToFindRelatedTweets(c *gin.Context) {
 // @Tags WhatIssueNow
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {array} win_m.WTagCount
-// @Failure 500 {object} libs.APIError
+// @Success 200 {array} win.TagCount
+// @Failure 500 {object} responses.Error
 // @Router /tag/count [get]
 func TagCount(c *gin.Context) {
-	var tagCount win_m.WTagCount
-
-	resp, err := tagCount.Counts()
+	resp, err := services.WordToTagCounts()
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -186,7 +174,6 @@ func TagCount(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": resp,
 	})
 }
@@ -197,13 +184,11 @@ func TagCount(c *gin.Context) {
 // @Tags WhatIssueNow
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {array} win_m.WWordCount
-// @Failure 500 {object} libs.APIError
+// @Success 200 {array} win.WordCount
+// @Failure 500 {object} responses.Error
 // @Router /word/count [get]
 func WordToCount(c *gin.Context) {
-	var wordCount win_m.WWordCount
-
-	resp, err := wordCount.Counts()
+	resp, err := services.WeeklyWordCount()
 
 	if err != nil {
 		libs.ErrResponse(c, http.StatusInternalServerError, err.Error())
@@ -211,7 +196,6 @@ func WordToCount(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": resp,
 	})
 }
