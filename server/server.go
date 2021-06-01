@@ -1,7 +1,8 @@
 package server
 
 import (
-	"github.com/99-66/NaiaBackendApi/routers/win_r"
+	"github.com/99-66/NaiaBackendApi/routers"
+	"github.com/fvbock/endless"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -19,8 +20,7 @@ func RunAPIWithMiddleware(address string) error {
 	r.Use(cors.New(corsConf))
 
 	// Set Routes
-	win_r.InitWINRoutes(r)
-	//docs_r.InitSwaggerRoutes(r)
+	routers.InitRouters(r)
 
-	return r.Run(address)
+	return endless.ListenAndServe(address, r)
 }

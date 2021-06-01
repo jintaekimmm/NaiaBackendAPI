@@ -45,20 +45,34 @@ var doc = `{
                     "WhatIssueNow"
                 ],
                 "summary": "이슈 단어목록 API",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Word list count by count",
+                        "name": "count",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Word Filtering by f",
+                        "name": "f",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/win_m.WList"
+                                "$ref": "#/definitions/List"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/libs.APIError"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -90,19 +104,19 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/win_m.RTweets"
+                            "$ref": "#/definitions/RelatedTweets"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/libs.APIError"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
             }
         },
-        "/related/{word}": {
+        "/related/w/{word}": {
             "get": {
                 "description": "특정 단어와 관련된 다른 단어들을 반환한다",
                 "consumes": [
@@ -128,13 +142,13 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/win_m.WordsResponse"
+                            "$ref": "#/definitions/WordsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/libs.APIError"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -166,13 +180,45 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/libs.APIError"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
             }
         },
-        "/tag/{word}": {
+        "/tag/count": {
+            "get": {
+                "description": "현재시간 기준 3시간 전까지의 태그별 단어 수를 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WhatIssueNow"
+                ],
+                "summary": "태그별 단어 수 API",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TagCount"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/tag/w/{word}": {
             "get": {
                 "description": "특정 단어의 발생지(태그) 점유율을 반환한다",
                 "consumes": [
@@ -198,13 +244,45 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/win_m.WTag"
+                            "$ref": "#/definitions/Tag"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/libs.APIError"
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/word/count": {
+            "get": {
+                "description": "현재시간 기준 7일전까지의 수집한 단어의 수를 일별로 반환한다",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WhatIssueNow"
+                ],
+                "summary": "일주일간 수집한 단어의 수 API",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/WordCount"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -226,6 +304,18 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Word list count by count",
+                        "name": "count",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Word Filtering by f",
+                        "name": "f",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "워드클라우드 단어 개수(최대 100개)",
                         "name": "count",
                         "in": "query"
@@ -237,17 +327,14 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
+                                "$ref": "#/definitions/WordCloud"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/libs.APIError"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -255,51 +342,15 @@ var doc = `{
         }
     },
     "definitions": {
-        "libs.APIError": {
+        "Error": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "message": {
+                "error": {
                     "type": "string"
                 }
             }
         },
-        "win_m.RLinks": {
-            "type": "object",
-            "properties": {
-                "sid": {
-                    "type": "string"
-                },
-                "tid": {
-                    "type": "string"
-                }
-            }
-        },
-        "win_m.RNodes": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "win_m.RTweets": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "win_m.WList": {
+        "List": {
             "type": "object",
             "properties": {
                 "count": {
@@ -310,7 +361,57 @@ var doc = `{
                 }
             }
         },
-        "win_m.WTag": {
+        "RelatedLinks": {
+            "type": "object",
+            "properties": {
+                "sid": {
+                    "type": "string"
+                },
+                "tid": {
+                    "type": "string"
+                }
+            }
+        },
+        "RelatedNodes": {
+            "type": "object",
+            "properties": {
+                "_size": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "RelatedTweet": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "RelatedTweets": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RelatedTweet"
+                    }
+                }
+            }
+        },
+        "Tag": {
             "type": "object",
             "properties": {
                 "percent": {
@@ -321,19 +422,76 @@ var doc = `{
                 }
             }
         },
-        "win_m.WordsResponse": {
+        "TagCount": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "string"
+                }
+            }
+        },
+        "WordCloud": {
+            "type": "object",
+            "properties": {
+                "words": {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "WordCount": {
+            "type": "object",
+            "properties": {
+                "article": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "community": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "date": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sns": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "total": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "WordsResponse": {
             "type": "object",
             "properties": {
                 "links": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/win_m.RLinks"
+                        "$ref": "#/definitions/RelatedLinks"
                     }
                 },
                 "nodes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/win_m.RNodes"
+                        "$ref": "#/definitions/RelatedNodes"
                     }
                 },
                 "rank": {
@@ -359,7 +517,7 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.1",
-	Host:        "localhost:8000",
+	Host:        "api.whatissuenow.com",
 	BasePath:    "/api/1",
 	Schemes:     []string{"http", "https"},
 	Title:       "WhatIssueNow API",

@@ -2,11 +2,12 @@
 Unused file
 */
 
-package stopWord_c
+package controllers
 
 import (
 	"github.com/99-66/NaiaBackendApi/libs"
-	"github.com/99-66/NaiaBackendApi/models/win_m"
+	"github.com/99-66/NaiaBackendApi/models/win"
+	"github.com/99-66/NaiaBackendApi/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -19,24 +20,23 @@ import (
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {string} string
-// @Failure 400 {object} libs.APIError
+// @Failure 400 {object} responses.Error
 func SetWords(c *gin.Context) {
-	var wStopWord win_m.WStopWord
-	err := c.ShouldBindJSON(&wStopWord)
+	var stopWord win.StopWord
+	err := c.ShouldBindJSON(&stopWord)
 	if err != nil {
 		libs.ErrResponse(c, http.StatusBadRequest, "Bad Request")
 		return
 	}
 
-	err = wStopWord.Set()
+	err = stopWord.Set()
 	if err != nil {
 		libs.ErrResponse(c, http.StatusBadRequest, "Bad Request")
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": wStopWord.Word,
+		"message": stopWord.Word,
 	})
 }
 
@@ -48,18 +48,16 @@ func SetWords(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Success 200 {array} string
-// @Failure 400 {object} libs.APIError
+// @Failure 400 {object} responses.Error
 // @Router /stopwords [get]
 func GetStopWords(c *gin.Context) {
-	var wStopWord win_m.WStopWord
-	words, err := wStopWord.List()
+	words, err := services.StopWords()
 	if err != nil {
 		libs.ErrResponse(c, http.StatusBadRequest, "Bad Request")
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
 		"message": words,
 	})
 }

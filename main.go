@@ -9,7 +9,7 @@ import (
 )
 
 // @title WhatIssueNow API
-// @version 1.1
+// @version 1.2
 // @description What Issue Now? Service Api Docs
 
 // @contact.name Jintae, kim
@@ -19,7 +19,7 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:8000
+// @host api.whatissuenow.com
 // @BasePath /api/1
 // @query.collection.format multi
 
